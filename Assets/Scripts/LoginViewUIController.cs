@@ -12,6 +12,9 @@ public class LoginViewUIController : MonoBehaviour
     [SerializeField] private Button signOutButton;
     [SerializeField] private FacebookLoginController facebookLoginController;
 
+    [SerializeField] private Button gamecenterSignInButton;
+    [SerializeField] private GameCenterLoginController gameCenterLoginController;
+
     [SerializeField] private GameObject loadingView;
 
     [SerializeField] private TMPro.TextMeshProUGUI infoText;
@@ -20,6 +23,8 @@ public class LoginViewUIController : MonoBehaviour
         facebookSignInButton.onClick.AddListener(OnLoginFacebook);
         signOutButton.onClick.AddListener(OnLogOut);
         facebookLoginController.OnLoginResult += OnFasebookLoginResult;
+
+        gamecenterSignInButton.onClick.AddListener(OnLoginGameCenter);
     }
 
     private void OnDestroy()
@@ -38,6 +43,17 @@ public class LoginViewUIController : MonoBehaviour
 
         Log($"OnLoginFacebook");
         facebookLoginController.SignInWithFacebook();         
+    }
+
+    public void OnLoginGameCenter()
+    {
+        if (PlayerDataHolder.loginProvider != LoginProviderType.None)
+            return;
+
+        ShowLoadingView();
+
+        Log($"OnLoginGameCenter");
+        gameCenterLoginController.AuthenticateToGameCenter();
     }
 
 
@@ -105,6 +121,10 @@ public class LoginViewUIController : MonoBehaviour
 			case LoginProviderType.Email:
 			case LoginProviderType.Guest:
             case LoginProviderType.GameCenter:
+                {
+                    gameCenterLoginController.LogOut();
+                    break;
+                }
             case LoginProviderType.None:
 			default:
 				break;
